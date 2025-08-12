@@ -1,0 +1,72 @@
+/* Reseteo básico */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background:  #e9f5ec;
+  font-family: Tahoma, sans-serif;
+
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center;     /* Centra verticalmente */
+  font-family: Tahoma, sans-serif;
+}
+/* Header fijo */
+header nav {
+  position: fixed;
+  width: 100%;
+  height: 80px;
+  background-color: white;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+}
+
+/* Contenedor principal */
+.container {
+  max-width: 800px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 50px auto 40px auto; /* separación superior para el header */
+  border-top: 1px solid transparent; /* evita colapso de márgenes */
+}
+
+.container2{
+  max-width: 800px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 200px auto 200px auto; /* separación superior para el header */
+  border-top: 1px solid transparent; /* evita colapso de márgenes */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Opcional: tabla con efecto hover */
+table.highlight > tbody > tr:hover {
+  background-color: #f0f9ff;
+}
+
+/* Logo en nav */
+.logo {
+  width: 100%;
+  
+}
+
+footer {
+  position: relative;
+  width: 100vw;
+  max-width: 100%;
+  left: 0;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;  /* menos padding vertical */
+  text-align: center;
+  min-height: 50px;    /* menos altura mínima */
+  box-sizing: border-box;
+}

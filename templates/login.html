@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - EcoSmart</title>
+  <!-- Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <!-- Si deseas separar estilos específicos del login -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+  <!-- Iconos de Material -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <nav class="white">
+      <div class="nav-wrapper container">
+        <a href="{{ url_for('index') }}" class="brand-logo">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EcoSmart Logo" style="height: 60px; vertical-align: middle;">
+        </a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="{{ url_for('index') }}" style="color: black;">Volver al inicio</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="row" style="margin-top: 50px;">
+      <div class="col s12 m8 offset-m2 l6 offset-l3">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title center-align">Acceder</span>
+            <p id="mensaje" class="red-text"></p>
+            <form id="loginForm">
+              <div class="input-field">
+                <input type="text" id="nombre" name="nombre" required>
+                <label for="nombre">Nombre o Correo</label>
+              </div>
+              <div class="input-field">
+                <input type="password" id="contrasena" name="contrasena" required>
+                <label for="contrasena">Contraseña</label>
+              </div>
+              <div class="center-align">
+                <button type="submit" class="btn green">Iniciar Sesión</button>
+              </div>
+            </form>
+            <div class="center" style="margin-top: 20px;">
+              <p>¿No tienes cuenta? <a href="{{ url_for('register') }}">Registrate aquí</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="page-footer green lighten-1">
+    <div class="container center">
+      <p>&copy; 2025 EcoSmart | Temas | Páginas</p>
+      <ul>
+        <li><a href="{{ url_for('index') }}" style="color: white;">Inicio</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <!-- Tu script de login -->
+  <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+</body>
+</html>

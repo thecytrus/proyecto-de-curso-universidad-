@@ -1,0 +1,7 @@
+# Evitar archivos bytecode de Python
+*.pyc
+__pycache__/
+
+# Base de datos local (si no quieres versionarla)
+users.db
+

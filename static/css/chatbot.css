@@ -1,0 +1,264 @@
+/* Estilos personalizados para el chat utilizando Materialize */
+
+body {
+  background-color: #e9f5ec;
+  font-family: Tahoma, sans-serif;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1 0 auto;
+  padding: 20px 0;
+}
+
+/* Specific styling for the main chatbot container */
+.chatbot-main .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch; /* Ensures columns stretch to equal height */
+}
+
+.chatbot-main aside,
+.chatbot-main section {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar - Historial de Conversaciones */
+.collection.with-header {
+  margin-bottom: 20px;
+  border: none; /* Remove default collection border */
+}
+
+.collection-header {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding: 15px 20px;
+  background-color: #d8f3dc !important; /* Lighter green for header */
+  color: #2d6a4f; /* Darker green text */
+  font-weight: bold;
+}
+
+.collection .collection-item.active {
+    background-color: #a5d6a7 !important; /* More prominent active state */
+    color: #fff !important;
+}
+
+.collection .collection-item.active .sample-question-item {
+    color: #fff !important;
+}
+
+.conversation-item {
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  padding: 10px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.conversation-item:last-child {
+    border-bottom: none;
+}
+
+.conversation-item:hover {
+  background-color: #e0f2f1; /* Lighter hover for clarity */
+}
+
+/* New Conversation Button */
+#newConversationBtn {
+    border-radius: 8px; /* Slightly rounded corners */
+    text-transform: capitalize; /* More natural text */
+    font-weight: 500;
+}
+
+/* Sample Questions Card */
+.card .card-title i {
+    vertical-align: middle;
+    margin-right: 8px;
+    font-size: 1.5rem;
+}
+
+#sampleQuestions {
+  margin-top: 10px;
+  padding: 0; /* Remove default collection padding */
+  border: none; /* Remove default collection border */
+}
+
+.sample-question-item {
+  cursor: pointer;
+  color: #00796b; /* Dark teal */
+  padding: 10px 15px; /* More padding for clickability */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-bottom: 1px dashed #eee; /* Subtle separator */
+  font-size: 0.95em;
+  line-height: 1.4;
+  display: block; /* Ensures full click area */
+}
+.sample-question-item:last-child {
+    border-bottom: none;
+}
+
+.sample-question-item:hover {
+  background-color: #e8f5e9; /* Light green hover */
+  color: #004d40; /* Darker teal on hover */
+  text-decoration: none; /* No underline, background change is enough */
+}
+
+
+/* Chatbox */
+.chat-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Make chat card fill its column height */
+}
+
+.chat-history {
+  flex-grow: 1; /* Allows history to take available space */
+  margin-top: 1em;
+  padding: 1em;
+  background: #fff;
+  min-height: 350px;
+  height: 400px; /* Kept fixed height as requested, but flex-grow allows it to extend if content is short */
+  border: 1px solid #ddd;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05); /* Inner shadow for depth */
+}
+
+.chat-entry {
+  max-width: 80%;
+  margin-bottom: 10px;
+  padding: 0.8em 1.2em; /* Slightly more padding */
+  border-radius: 20px; /* More rounded corners */
+  word-wrap: break-word;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Softer shadow */
+  animation: fadeIn 0.5s ease-in-out;
+  position: relative; /* For timestamp positioning */
+}
+
+.chat-entry strong {
+    font-weight: 600;
+}
+
+.chat-user {
+  background-color: #d8f3dc;
+  color: #2d6a4f;
+  align-self: flex-end;
+  text-align: right;
+  border-bottom-right-radius: 5px; /* Pointy corner for last message */
+}
+
+.chat-bot {
+  background-color: #e0f7fa;
+  color: #00acc1;
+  align-self: flex-start;
+  text-align: left;
+  border-bottom-left-radius: 5px; /* Pointy corner for last message */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Input field */
+.input-field textarea.materialize-textarea {
+  min-height: 50px;
+  padding: 10px 0; /* Adjust padding for better look */
+  border-bottom: 1px solid #ccc !important; /* Ensure border visibility */
+  box-shadow: none !important; /* Remove default input shadow */
+}
+
+.input-field textarea.materialize-textarea:focus {
+    border-bottom: 1px solid #4caf50 !important; /* Green focus border */
+    box-shadow: 0 1px 0 0 #4caf50 !important;
+}
+
+.input-field label {
+    color: #4caf50 !important; /* Green label */
+}
+
+.chat-input-area {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+}
+
+.chat-input-area .row {
+    margin-bottom: 0; /* Remove default row margin */
+    display: flex;
+    align-items: flex-end;
+}
+
+.chat-input-area .col.s10 {
+    padding-right: 15px; /* Space between textarea and button */
+}
+
+.chat-input-area .col.s2 {
+    padding-left: 0;
+}
+
+.send-btn {
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12); /* Materialize default shadow */
+    transition: background-color 0.3s ease;
+}
+
+.send-btn:hover {
+    background-color: #388e3c !important; /* Darker green on hover */
+}
+
+.active-nav {
+    background-color: #a5d6a7; /* o el verde que uses */
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+.active-nav a {
+    color: white !important;
+}
+
+
+/* Logo */
+.logo-img {
+  height: 50px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+/* Estilos para el mensaje "escribiendo..." */
+.chat-entry.typing {
+    font-style: italic;
+    color: #616161;
+    background-color: #f5f5f5;
+    animation: pulse 1.5s infinite;
+    align-self: flex-start; /* Align typing message to the left */
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 0.5; }
+    100% { opacity: 0.8; }
+}
+
+/* Media Queries for Responsiveness */
+@media only screen and (max-width: 992px) { /* Tablets and smaller */
+    .chatbot-main aside,
+    .chatbot-main section {
+        margin-bottom: 20px; /* Add space between columns on smaller screens */
+    }
+    .chatbot-main aside {
+        order: 2; /* Put history/sample questions below chat on small screens */
+    }
+    .chatbot-main section {
+        order: 1; /* Keep chat at the top */
+    }
+}
+
+@media only screen and (max-width: 600px) { /* Phones */
+    .chat-entry {
+        max-width: 95%; /* Allow messages to take more width on small screens */
+    }
+    .chat-input-area .col.s10 {
+        padding-right: 10px;
+    }
+}

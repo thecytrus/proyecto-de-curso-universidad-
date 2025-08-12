@@ -1,0 +1,40 @@
+body {
+    font-family: Tahoma, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f0f4f3;
+}
+
+main {
+    flex: 1 0 auto;
+    padding-bottom: 40px;
+}
+
+.flash-messages {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+table td, table th {
+    font-size: 15px;
+    padding: 10px 12px;
+}
+
+.nav-link {
+    color: black !important;
+}
+
+h2 {
+    font-weight: 600;
+    color: #2e7d32;
+}
+.active-nav {
+    background-color: #a5d6a7; /* o el verde que uses */
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+.active-nav a {
+    color: white !important;
+}
+

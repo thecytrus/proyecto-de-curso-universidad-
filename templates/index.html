@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>EcoSmart - Agricultura Inteligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header x-data="authComponent()" x-init="checkSession()">
+        <nav class="white">
+            <div class="nav-wrapper container">
+                <a href="{{ url_for('index') }}" class="brand-logo" @click="event.preventDefault(); logoClicked = true; setTimeout(() => window.location.href = '{{ url_for('index') }}', 5000)">
+                    <img @click="logoClicked = true; setTimeout(() => logoClicked = false, 5000)"
+                         src="{{ url_for('static', filename='images/logo.png') }}"
+                         alt="logo_ecosmart"
+                         class="logo"
+                         style="height: 60px; vertical-align: middle;">
+                    <span x-show="logoClicked" class="yellow lighten-1" style="padding: 5px; border-radius: 3px;">¡Logo clickeado!... Recargando página</span>
+                </a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <template x-if="isLoggedIn">
+                        <li>
+                            <div class="perfil" style="cursor: pointer; display: flex; align-items: center;" @click="window.location.href='/perfil'">
+                                <i class="material-icons left">account_circle</i>
+                                <span>Mi Perfil</span>
+                            </div>
+                        </li>
+                    </template>
+                    <template x-if="!isLoggedIn">
+                        <li>
+                            <button class="waves-effect waves-light btn green lighten-1"
+                                    @click="handleLogin()"
+                                    x-text="'Iniciar sesión'"></button>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="intro" x-data="{
+            currentIndex: 0,
+            images: [
+                '/static/images/foto1carrusel.jpg',
+                '/static/images/foto2carrusel.jpg',
+                '/static/images/foto3carrusel.jpg'
+            ],
+            mostrarDescripcion: false,
+            intervalId: null,
+            startCarousel() {
+                this.intervalId = setInterval(() => {
+                    this.next();
+                }, 3000);
+            },
+            stopCarousel() {
+                clearInterval(this.intervalId);
+            },
+            next() {
+                this.currentIndex = (this.currentIndex + 1) % this.images.length;
+            },
+            prev() {
+                this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+            }
+        }"
+        x-init="startCarousel()"
+        @mouseover="stopCarousel()"
+        @mouseleave="startCarousel()">
+
+            <h2 class="center-align">Plataforma de Agricultura Inteligente</h2>
+            <div class="row center">
+                <div class="col s12 m12 l12">
+                    <button class="waves-effect waves-light btn green lighten-1" @click="prev()">Anterior</button>
+                    <img :src="images[currentIndex]" alt="Imagen Agricultura" class="responsive-img" style="max-height: 300px; margin: 0 20px;">
+                    <button class="waves-effect waves-light btn green lighten-1" @click="next()">Siguiente</button>
+                </div>
+            </div>
+            <div class="row center">
+                <button class="waves-effect waves-light btn green lighten-1" @click="mostrarDescripcion = !mostrarDescripcion" style="margin-top: 10px;">
+                    <span x-text="mostrarDescripcion ? 'Ocultar Descripción' : 'Mostrar Descripción'"></span>
+                </button>
+                <p x-show="mostrarDescripcion" style="margin-top: 10px;" class="flow-text">
+                    La nueva plataforma inteligente para controlar y gestionar tus cultivos de una manera más óptima.
+                </p>
+            </div>
+        </section>
+
+        <section class="descripcion section">
+            <h3 class="center-align">¿Qué es Ecosmart?</h3>
+            <div x-data="{ open1: false, open2: false }">
+                <div>
+                    <h4 @click="open1 = !open1" style="cursor: pointer;"><i class="material-icons left">lightbulb_outline</i> ¿Qué facilita Ecosmart?</h4>
+                    <p x-show="open1" x-transition style="padding-left: 30px;">
+                        Ecosmart es una plataforma inteligente diseñada para agrónomos, agricultores y técnicos, que facilita la gestión integral de cultivos y sensores ambientales de forma sencilla, eficiente y segura.
+                    </p>
+                </div>
+                <div style="margin-top: 15px;">
+                    <h4 @click="open2 = !open2" style="cursor: pointer;"><i class="material-icons left">lightbulb_outline</i> ¿Qué más puedo hacer?</h4>
+                    <p x-show="open2" x-transition style="padding-left: 30px;">
+                        Con Ecosmart, también puedes acceder a información meteorológica actualizada, consultar una IA especializada y recibir soluciones precisas para mejorar tus cultivos.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="opciones section">
+            <h3 class="center-align">Opciones disponibles</h3>
+            <div class="row equal-height">
+                <div class="col s12 m6 l3" x-data="{ hovered: false }" @mouseover="hovered = true" @mouseleave="hovered = false" :class="{ 'z-depth-1 hoverable': hovered }">
+                    <a href="{{ url_for('chatbot_route') }}">
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{ url_for('static', filename='images/ia.jpg') }}" alt="Consulta IA" class="responsive-img"/>
+                                <span class="card-title">Consultas a una IA</span>
+                            </div>
+                            <div class="card-content">
+                                <p style="color: green;">Aprende más sobre tus plantas con una consulta a la IA.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col s12 m6 l3" x-data="{ hovered: false }" @mouseover="hovered = true" @mouseleave="hovered = false" :class="{ 'z-depth-1 hoverable': hovered }">
+                    <a href="#" id="cultivos-link">
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{ url_for('static', filename='images/cultivos.jpg') }}" alt="Gestión cultivos" class="responsive-img"/>
+                                <span class="card-title">Gestión de cultivos</span>
+                            </div>
+                            <div class="card-content">
+                                <p style="color: green;">Gestiona tus cultivos sin límites de manera eficiente.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col s12 m6 l3" x-data="{ hovered: false }" @mouseover="hovered = true" @mouseleave="hovered = false" :class="{ 'z-depth-1 hoverable': hovered }">
+                    <a href="{{ url_for('clima_route') }}">
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{ url_for('static', filename='images/clima.jpg') }}" alt="Consulta clima" class="responsive-img"/>
+                                <span class="card-title">Consulta de meteorología</span>
+                            </div>
+                            <div class="card-content">
+                                <p style="color: green;">Conoce el clima de tu ciudad y recibe alertas importantes.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col s12 m6 l3" x-data="{ hovered: false }" @mouseover="hovered = true" @mouseleave="hovered = false" :class="{ 'z-depth-1 hoverable': hovered }">
+                    <a href="{{ url_for('sensores_route') }}">
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{ url_for('static', filename='images/monitoreo.jpg') }}" alt="Monitoreo" class="responsive-img"/>
+                                <span class="card-title">Sensores y monitoreo</span>
+                            </div>
+                            <div class="card-content">
+                                <p style="color: green;">Monitorea tus cultivos y detecta riesgos rápidamente.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        
+
+        <section class="equipo section green lighten-4">
+            <h3 class="center-align">Quiénes somos</h3>
+            <div class="row center">
+                <div class="col s12 m6 l3">
+                    <p class="flow-text">Dylan Moreno</p>
+                </div>
+                <div class="col s12 m6 l3">
+                    <p class="flow-text">Esteban Guzmán</p>
+                </div>
+                <div class="col s12 m6 l3">
+                    <p class="flow-text">Fabián Paredes</p>
+                </div>
+                <div class="col s12 m6 l3">
+                    <p class="flow-text">Felipe Reyes</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="page-footer green lighten-1">
+        <div class="container center">
+            © 2025 EcoSmart - Todos los derechos reservados
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js" defer></script>
+</body>
+</html>

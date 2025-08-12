@@ -1,0 +1,131 @@
+body {
+  font-family: Tahoma, sans-serif;
+  background: #f0f0f0;
+  transition: background 1s ease-in-out, color 0.5s;
+}
+
+body.dark-theme {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-theme .card {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+body.dark-theme nav {
+  background-color: #333;
+}
+
+nav {
+  padding: 0 20px;
+}
+
+.brand-logo img {
+  height: 50px;
+}
+
+.weather-form {
+  margin: 20px 0;
+}
+
+.weather-form .input-field input {
+  width: 250px;
+}
+
+#weatherResult {
+  margin-top: 30px;
+}
+
+#location {
+  margin-bottom: 20px;
+}
+
+.card.today {
+  border: 2px solid #40916c;
+}
+h2 {
+    font-weight: 600;
+    color: #2e7d32; 
+   }
+
+#rain-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.raindrop {
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  background: #87cefa;
+  animation: rain 1s infinite linear;
+}
+  
+   .info-box {
+  background-color: #e8f5e9; /* Verde muy claro */
+  border: 1px solid #c8e6c9;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 800px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.info-box h6 {
+  margin: 0;
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+
+@keyframes rain {
+  0% { transform: translateY(-10px); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+body.sunny {
+  background: linear-gradient(to top, #ffefba, #ffffff);
+}
+
+body.cloudy {
+  background: linear-gradient(to top, #d7d2cc, #304352);
+}
+
+body.rainy {
+  background: linear-gradient(to top, #4e54c8, #8f94fb);
+}
+
+@media (max-width: 600px) {
+  .weather-form .input-field input {
+    width: 100%;
+  }
+}
+
+/*AÑADIR FONDO A CUADRO DE BUSQUEDA*/
+
+.weather-box {
+  background: white;
+  padding: 2px;
+  border-radius: 8px;
+  margin-top: 2px;
+}
+
+body.dark-theme .weather-box {
+  background: #1e1e1e;
+}
+.active-nav {
+    background-color: #a5d6a7; /* o el verde que uses */
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+.active-nav a {
+    color: white !important;
+}

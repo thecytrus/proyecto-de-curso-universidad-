@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECOSMART - Cultivos</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/cultivos.css') }}">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+</head>
+<body class="{% if request.endpoint == 'cultivos_route' %}cultivo-body{% endif %}">
+  {% set active = request.endpoint %}
+  <header>
+    <nav class="white lighten-1">
+      <div class="nav-wrapper container">
+        <a href="{{ url_for('index') }}" class="brand-logo left" style="padding-left: 0;">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EcoSmart Logo" style="height: 50px;">
+        </a>
+        <ul class="right hide-on-med-and-down">
+           <li class="{{ 'active-nav' if active == 'index' else '' }}">
+            <a href="{{ url_for('index') }}" style="color: black;">
+               Inicio</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'chatbot_route' else '' }}">
+            <a href="{{ url_for('chatbot_route') }}" style="color: black;">
+              <i class="material-icons left">chat</i> IA</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'cultivos_route' else '' }}">
+            <a href="{{ url_for('cultivos_route') }}" style="color: black;">
+               Cultivo</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'clima_route' else '' }}">
+            <a href="{{ url_for('clima_route') }}" style="color: black;">
+              Meteorología</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'sensores_route' else '' }}">
+            <a href="{{ url_for('sensores_route') }}" style="color: black;">
+               Sensores &amp; Monitoreo</a>
+          </li>
+          
+          
+          <li class="{{ 'active-nav' if active == 'historial_alertas' else '' }}">
+            <a href="{{ url_for('historial_alertas') }}" style="color: black;">
+              <i class="material-icons left">history</i>Historial alertas
+            </a>
+            
+          </li>
+          <li class="{{ 'active-nav' if active == 'perfil' else '' }}">
+            <a href="/perfil" style="color: black;">
+              <i class="material-icons left">account_circle</i>Mi Perfil
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2 class="center-align">Gestión de Cultivos ECOSMART</h2>
+    <div class="info-box">
+      <h6 class="center-align">En el siguiente Mapa se visualizan los cultivos agregados</h6>
+    </div>
+    
+    <div id="map" style="height: 400px;"></div>
+    <div id="notification" class="card-panel" style="display: none;"></div>
+
+    <div id="crop-list-container" class="card-panel">
+      <h2 class="center-align">Lista de Cultivos</h2>
+      {% if not has_cultivos %}
+      <p class="flow-text center-align">
+        {% if tipo_usuario == 'agricultor' %}
+        Actualmente no tiene ningún cultivo asociado.
+        {% elif tipo_usuario == 'agronomo' %}
+        No ha agregado ningún cultivo todavía.
+        {% else %}
+        No hay cultivos registrados en el sistema.
+        {% endif %}
+      </p>
+      {% else %}
+      <table class="striped highlight responsive-table">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Ciudad</th>
+            <th>Agricultor</th>
+            <th>Tipo de Cultivo</th>
+            <th>Latitud</th>
+            <th>Longitud</th>
+            {% if tipo_usuario == 'agronomo' or tipo_usuario == 'admin' %}
+            <th>Acciones</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody id="crops-table-body">
+          {% for cultivo in cultivos %}
+          <tr>
+            <td>{{ cultivo.numero }}</td>
+            <td>{{ cultivo.ciudad }}</td>
+            <td>{{ cultivo.agricultor if cultivo.usuario_id else 'N/A' }}</td>
+            <td>{{ cultivo.tipo }}</td>
+            <td>{{ cultivo.latitud }}</td>
+            <td>{{ cultivo.longitud }}</td>
+            {% if tipo_usuario == 'agronomo' or tipo_usuario == 'admin' %}
+            <td class="action-buttons">
+              <button class="edit-button waves-effect waves-light btn yellow darken-2" data-id="{{ cultivo.numero }}">
+                <i class="material-icons left">edit</i>Editar
+              </button>
+              <button class="delete-button waves-effect waves-light btn red darken-2" data-id="{{ cultivo.numero }}">
+                <i class="material-icons left">delete</i>Eliminar
+              </button>
+            </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+
+      {% if tipo_usuario == 'agronomo' %}
+      <button id="add-crop-btn" class="waves-effect waves-light btn green darken-1 mt-3">Agregar Cultivo</button>
+      {% endif %}
+    </div>
+
+    <!-- Formulario Agregar -->
+    <div id="add-crop-section" class="form-section hide">
+      <h2 class="center-align">Agregar Nuevo Cultivo</h2>
+      <form id="add-crop-form">
+        <div class="input-field">
+          <input type="text" id="ciudad" name="ciudad" required>
+          <label for="ciudad">Ciudad</label>
+        </div>
+        <div class="input-field">
+          <select id="usuario_id" name="usuario_id" required>
+            <option value="" disabled selected>Selecciona un agricultor</option>
+          </select>
+          <label for="usuario_id">Agricultor</label>
+        </div>
+        <div class="input-field">
+          <input type="text" id="tipo" name="tipo" required>
+          <label for="tipo">Tipo de Cultivo</label>
+        </div>
+        <div class="info-box">
+        <h6 class="center-align">En el siguiente Mapa marque el lugar donde deseas agregar el cultivo y automaticamente se guardara la latitud y longitud.</h6>
+        </div>
+        <div id="add-form-map"></div>
+        <div class="input-field">
+          <input type="number" step="any" id="latitud" name="latitud" required>
+          <label for="latitud">Latitud</label>
+        </div>
+        <div class="input-field">
+          <input type="number" step="any" id="longitud" name="longitud" required>
+          <label for="longitud">Longitud</label>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="waves-effect waves-light btn green darken-1">Guardar Cultivo</button>
+          <button type="button" id="cancel-add-btn" class="waves-effect waves-light btn grey lighten-1">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Formulario Editar -->
+    <div id="edit-crop-section" class="form-section hide">
+      <h2 class="center-align">Editar Cultivo</h2>
+      <form id="edit-crop-form">
+        <div class="input-field">
+          <input type="text" id="edit-numero" name="edit-numero" readonly>
+          <label for="edit-numero">Número</label>
+        </div>
+        <div class="input-field">
+          <input type="text" id="edit-ciudad" name="edit-ciudad" required>
+          <label for="edit-ciudad">Ciudad</label>
+        </div>
+        <div class="input-field">
+          <select id="edit-usuario_id" name="edit-usuario_id" required>
+            <option value="" disabled selected>Selecciona un agricultor</option>
+          </select>
+          <label for="edit-usuario_id">Agricultor</label>
+        </div>
+        <div class="input-field">
+          <input type="text" id="edit-tipo" name="edit-tipo" required>
+          <label for="edit-tipo">Tipo de Cultivo</label>
+        </div>
+        <div class="info-box">
+        <h6 class="center-align">En el siguiente Mapa marque el lugar donde deseas editar el cultivo y automaticamente se guardara la latitud y longitud.</h6>
+        </div>
+        <div id="edit-form-map"></div>
+        <div class="input-field">
+          <input type="number" step="any" id="edit-latitud" name="edit-latitud" required>
+          <label for="edit-latitud">Latitud</label>
+        </div>
+        <div class="input-field">
+          <input type="number" step="any" id="edit-longitud" name="edit-longitud" required>
+          <label for="edit-longitud">Longitud</label>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="waves-effect waves-light btn yellow darken-2">Actualizar Cultivo</button>
+          <button type="button" id="cancel-edit-btn" class="waves-effect waves-light btn grey lighten-1">Cancelar</button>
+        </div>
+      </form>
+    </div>
+ 
+  </main>
+  <!-- ✅ Footer fuera de <main> -->
+  <footer class="page-footer green lighten-4">
+    <div class="green darken-1 footer-copyright">
+      <div class="container">
+        © 2025 EcoSmart - Todos los derechos reservados.
+        <a class="grey-text text-lighten-4 right" href="#!">Términos y Condiciones</a>
+      </div>
+    </div>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="{{ url_for('static', filename='js/cultivos.js') }}"></script>
+</body>
+</html>

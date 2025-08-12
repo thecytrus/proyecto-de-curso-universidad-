@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chatbot EcoSmart</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}" />
+  <style>
+    /* Moved sample-question-item styles to chatbot.css for better organization */
+  </style>
+ 
+</head>
+<body class="{% if request.endpoint == 'cultivos_route' %}cultivo-body{% endif %}">
+  {% set active = request.endpoint %}
+  <header>
+    <nav class="white lighten-1">
+      <div class="nav-wrapper container">
+        <a href="{{ url_for('index') }}" class="brand-logo left" style="padding-left: 0;">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EcoSmart Logo" style="height: 50px;">
+        </a>
+        <ul class="right hide-on-med-and-down">
+           <li class="{{ 'active-nav' if active == 'index' else '' }}">
+            <a href="{{ url_for('index') }}" style="color: black;">
+               Inicio</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'chatbot_route' else '' }}">
+            <a href="{{ url_for('chatbot_route') }}" style="color: black;">
+              <i class="material-icons left">chat</i>IA</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'cultivos_route' else '' }}">
+            <a href="{{ url_for('cultivos_route') }}" style="color: black;">Cultivo</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'clima_route' else '' }}">
+            <a href="{{ url_for('clima_route') }}" style="color: black;">Meteorología</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'sensores_route' else '' }}">
+            <a href="{{ url_for('sensores_route') }}" style="color: black;">Sensores &amp; Monitoreo</a>
+          </li>
+          
+          <li class="{{ 'active-nav' if active == 'historial_alertas' else '' }}">
+            <a href="{{ url_for('historial_alertas') }}" style="color: black;">
+              <i class="material-icons left">history</i>Historial alertas
+            </a>
+            
+          </li>
+          <li class="{{ 'active-nav' if active == 'perfil' else '' }}">
+            <a href="/perfil" style="color: black;">
+              <i class="material-icons left">account_circle</i>Mi Perfil
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container chatbot-main">
+    <div class="row">
+      <aside class="col s12 m4">
+        <ul id="conversations" class="collection with-header z-depth-1">
+          <li class="collection-header green lighten-4">
+            <h5>Historial de Conversaciones</h5>
+          </li>
+        </ul>
+        <a id="newConversationBtn" class="btn green waves-effect waves-light btn-large" style="width: 100%; margin-top: 10px;">
+          <i class="material-icons left">add_comment</i>Nueva Conversación
+        </a>
+        <a id="deleteCurrentChatBtn" class="btn red darken-1 waves-effect waves-light btn-large" style="width: 100%; margin-top: 10px;">
+          <i class="material-icons left">delete_forever</i>Eliminar Chat Actual
+        </a>
+
+        <div class="card z-depth-1" style="margin-top: 20px;">
+          <div class="card-content">
+            <span class="card-title green-text text-darken-3">
+              <i class="material-icons left">lightbulb_outline</i>Consultas Habituales
+            </span>
+            <div id="sampleQuestions" class="collection" style="max-height: 300px; overflow-y: auto; border: none;">
+              </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="col s12 m8">
+        <div class="card z-depth-1 chat-card">
+          <div class="card-content">
+            <span class="card-title green-text text-darken-3">
+              <i class="material-icons left">chat</i>EcoSmart Chat
+            </span>
+            <div id="chatHistory" class="chat-history"></div>
+          </div>
+          <div class="card-action chat-input-area">
+            <div class="row m-0">
+              <div class="input-field col s10 p-0">
+                <textarea id="userInput" class="materialize-textarea" placeholder="Escribe tu mensaje aquí..." data-length="500"></textarea>
+                <label for="userInput">Mensaje</label>
+              </div>
+              <div class="col s2 center-align p-0">
+                <button id="sendButton" class="btn-floating btn-large waves-effect waves-light green send-btn">
+                  <i class="material-icons">send</i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="page-footer green lighten-4">
+    <div class="green darken-1 footer-copyright">
+      <div class="container">
+        © 2025 EcoSmart - Todos los derechos reservados.
+        <a class="grey-text text-lighten-4 right" href="#!">Términos y Condiciones</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+</html>

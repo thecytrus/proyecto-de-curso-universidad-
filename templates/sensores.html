@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sensores y Monitoreo</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sensores.css') }}">
+  <style>
+    canvas {
+      width: 100%;
+      height: 600px; /* This height might be too much for smaller charts, check sensors.css */
+    }
+    
+    .active-nav {
+    background-color: #a5d6a7; /* o el verde que uses */
+    border-radius: 6px;
+    transition: background 0.3s;
+    }
+    .active-nav a {
+    color: white !important;
+    }
+
+    .no-cultivos-message {
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #ffab00;
+      background-color: #fff3e0;
+      color: #e65100;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    .initial-message {
+      text-align: center;
+      padding: 20px;
+      color: #757575;
+    }
+    .error-message {
+      text-align: center;
+      padding: 20px;
+      color: #d32f2f;
+      background-color: #ffebee;
+      border: 1px solid #ef9a9a;
+      border-radius: 5px;
+    }
+    .no-data-message {
+      text-align: center;
+      padding: 20px;
+      color: #424242;
+      background-color: #e0f2f7;
+      border: 1px solid #81d4fa;
+      border-radius: 5px;
+    }
+    /* Estilos para los popups (se crearán dinámicamente) */
+    .popup-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+    .popup {
+      position: relative;
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      border-radius: 4px;
+      display: block;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      max-width: 300px;
+      color: #fff;
+    }
+    .popup .popup-icon {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    .popup .close-icon {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+    }
+    .success-popup {
+      background-color: #4caf50;
+    }
+    .alert-popup {
+      background-color: #ff9800;
+    }
+    .error-popup {
+      background-color: #f44336;
+    }
+    .info-popup {
+      background-color: #2196f3;
+    }
+    .success-message,
+    .alert-message,
+    .error-message,
+    .info-message {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <header>
+     <nav class="white lighten-1">
+      <div class="nav-wrapper container">
+        <a href="{{ url_for('index') }}" class="brand-logo left" style="padding-left: 0;">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EcoSmart Logo" style="height: 50px;">
+        </a>
+        <ul class="right hide-on-med-and-down">
+           <li class="{{ 'active-nav' if active == 'index' else '' }}">
+            <a href="{{ url_for('index') }}" style="color: black;">
+               Inicio</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'chatbot_route' else '' }}">
+            <a href="{{ url_for('chatbot_route') }}" style="color: black;">
+              <i class="material-icons left">chat</i> IA</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'cultivos_route' else '' }}">
+            <a href="{{ url_for('cultivos_route') }}" style="color: black;">
+               Cultivo</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'clima_route' else '' }}">
+            <a href="{{ url_for('clima_route') }}" style="color: black;">
+              Meteorología</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'sensores_route' else '' }}">
+            <a href="{{ url_for('sensores_route') }}" style="color: black;">
+               Sensores &amp; Monitoreo</a>
+          </li>
+         
+          <li class="{{ 'active-nav' if active == 'historial_alertas' else '' }}">
+            <a href="{{ url_for('historial_alertas') }}" style="color: black;">
+              <i class="material-icons left">history</i>Historial alertas
+            </a>
+            
+          </li>
+          <li class="{{ 'active-nav' if active == 'perfil' else '' }}">
+            <a href="/perfil" style="color: black;">
+              <i class="material-icons left">account_circle</i>Mi Perfil
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  
+  <main>
+    <div class="container">
+      <h2 class="center-align">Monitoreo de Sensores por Cultivo</h2>
+    </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="card-panel 
+              {% if category == 'success' %}green lighten-4 green-text text-darken-4
+              {% elif category == 'error' %}red lighten-4 red-text text-darken-4
+              {% elif category == 'warning' %}yellow lighten-4 orange-text text-darken-4
+              {% elif category == 'info' %}blue lighten-4 blue-text text-darken-4
+              {% else %}grey lighten-4 grey-text text-darken-4{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="row" style="margin-left: 10px; margin-right: 10px;">
+      {% if not has_cultivos %}
+        <div class="col s12 m8 offset-m2">
+          <div class="card-panel teal lighten-4">
+            <span class="white-text">
+              No tienes cultivos registrados aún. Por favor, agrega un nuevo cultivo para empezar a monitorear sus sensores.
+            </span>
+          </div>
+        </div>
+      {% else %}
+        {% for cultivo in cultivos %}
+          <div class="col s12">
+            <div class="card z-depth-2">
+              <div class="card-content">
+                <div class="row">
+                  <div class="col s12 m4">
+                    <span class="card-title">{{ cultivo.nombre }} ({{ cultivo.numero }})</span>
+                    <p><strong>Tipo:</strong> {{ cultivo.tipo }}</p>
+                    <p><strong>Ubicación:</strong> {{ cultivo.ciudad }}</p>
+                    <div class="divider"></div>
+                    <h6 class="center-align" style="margin-top: 15px;">Datos de Sensores Actuales</h6>
+                    <div class="sensor-data" id="data-{{ cultivo.numero }}">
+                      <p>Humedad del Suelo: <span class="humedad-suelo">N/A</span> %</p>
+                      <p>pH del Suelo: <span class="ph-suelo">N/A</span></p>
+                      <p>Temperatura Ambiente: <span class="temperatura-ambiente">N/A</span> °C</p>
+                      <p>Nitrógeno (N): <span class="nitrogeno">N/A</span> ppm</p>
+                      <p>Fósforo (P): <span class="fosforo">N/A</span> ppm</p>
+                      <p>Potasio (K): <span class="potasio">N/A</span> ppm</p>
+                      <p>Última actualización: <span class="timestamp">N/A</span></p>
+                    </div>
+                    <div class="card-action center-align" style="margin-top: 20px;">
+                      {% if tipo_usuario in ['admin', 'agronomo'] %}
+                        <button class="btn green darken-2 generar-datos"
+                                data-cultivo-numero="{{ cultivo.numero }}"
+                                data-status="{{ cultivo.generation_status }}">
+                          {{ 'Detener Generación' if cultivo.generation_status == 'running' else 'Iniciar Generación' }}
+                        </button>
+
+                        <a href="{{ url_for('mostrar_datos_avanzados') }}" class="btn green darken-2" style="margin-left: 10px;">
+                          Datos avanzados
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="col s12 m8">
+                    <h6 class="center-align" style="margin-top: 15px;">Historial de Datos</h6>
+                    <div class="row">
+                      <div class="col s12 m6">
+                        <div class="chart-container">
+                          <canvas id="chart-temperatura-{{ cultivo.numero }}"></canvas>
+                        </div>
+                      </div>
+                      <div class="col s12 m6">
+                        <div class="chart-container">
+                          <canvas id="chart-humedad-{{ cultivo.numero }}"></canvas>
+                        </div>
+                      </div>
+                      <div class="col s12 m6">
+                        <div class="chart-container">
+                          <canvas id="chart-ph-{{ cultivo.numero }}"></canvas>
+                        </div>
+                      </div>
+                      <div class="col s12 m6">
+                        <div class="chart-container">
+                          <canvas id="chart-nutrientes-{{ cultivo.numero }}"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </main>
+
+  <footer class="page-footer green lighten-4">
+    <div class="green darken-1 footer-copyright">
+      <div class="container">
+        © 2025 EcoSmart - Todos los derechos reservados.
+        <a class="grey-text text-lighten-4 right" href="#!">Términos y Condiciones</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="{{ url_for('static', filename='js/sensores.js') }}"></script>
+
+  <div class="popup-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+</body>
+</html>

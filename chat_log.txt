@@ -1,0 +1,30 @@
+Usuario: hola
+EcoSmart: **Hola.**
+
+Usuario: hola
+EcoSmart: Hola, soy EcoSmart. En qué necesitas ayuda sobre agricultura.
+
+Usuario: necesito que me digas cuanto es 5 por 2 mas 25 menos 50
+EcoSmart: **-15**
+
+Usuario: soy dylan
+EcoSmart: **-15**
+
+Usuario: por que respondiste lo mismo
+EcoSmart: Porque el resultado matemático no cambia.
+
+Usuario: pero dije soy dylan
+EcoSmart: **-15** sigue siendo la respuesta.
+
+Usuario: cuanto es 10 mas 10
+EcoSmart: **20**. Sin relación con agricultura.
+
+Usuario: suma 10 mas
+EcoSmart: **10 + 10 = 20**.
+
+Usuario: dije que sumaras 10 mas al resultado anterior
+EcoSmart: **30** (20 + 10).
+
+Usuario: quien soy
+EcoSmart: **Dylan**, según lo mencionaste anteriormente.
+

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Alertas - EcoSmart</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <style>
+    .flash-messages {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    h2 {
+    font-weight: 600;
+    color: #2e7d32; 
+   }
+   .info-box {
+  background-color: #e8f5e9; /* Verde muy claro */
+  border: 1px solid #c8e6c9;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 800px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.info-box h6 {
+  margin: 0;
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+     <nav class="white lighten-1">
+      <div class="nav-wrapper container">
+        <a href="{{ url_for('index') }}" class="brand-logo left" style="padding-left: 0;">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EcoSmart Logo" style="height: 50px;">
+        </a>
+        <ul class="right hide-on-med-and-down">
+           <li class="{{ 'active-nav' if active == 'index' else '' }}">
+            <a href="{{ url_for('index') }}" style="color: black;">
+               Inicio</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'chatbot_route' else '' }}">
+            <a href="{{ url_for('chatbot_route') }}" style="color: black;">
+              <i class="material-icons left">chat</i> IA</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'cultivos_route' else '' }}">
+            <a href="{{ url_for('cultivos_route') }}" style="color: black;">
+               Cultivo</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'clima_route' else '' }}">
+            <a href="{{ url_for('clima_route') }}" style="color: black;">
+              Meteorología</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'sensores_route' else '' }}">
+            <a href="{{ url_for('sensores_route') }}" style="color: black;">
+               Sensores &amp; Monitoreo</a>
+          </li>
+          
+          <li class="{{ 'active-nav' if active == 'historial_alertas' else '' }}">
+            <a href="{{ url_for('historial_alertas') }}" style="color: black;">
+              <i class="material-icons left">history</i>Historial alertas
+            </a>
+            
+          </li>
+          <li class="{{ 'active-nav' if active == 'perfil' else '' }}">
+            <a href="/perfil" style="color: black;">
+              <i class="material-icons left">account_circle</i>Mi Perfil
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="container">
+    <div class="section">
+      {# Mostrar mensajes flash (success, error, etc.) #}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="row flash-messages">
+            <div class="col s12">
+              {% set category, message = messages[-1] %}
+              <div class="card-panel {{ 'red lighten-1' if category == 'error' else ('green lighten-1' if category == 'success' else 'blue lighten-1') }} white-text">
+                {{ message }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <h2 class="center-align">Gestión de Alertas</h2>
+      <h5 class="center-align">Ayuda para crear nuevas alertas</h5>
+      <div class="info-box">
+        <h6 class="center-align">- El umbral es el valor limite que debe alcanzar la medida para que se dispare la alerta. Por ejemplo, si el umbral es 30 y el usuario ingresa una condicion "Mayor que(>)", además de seleccionar tipo de medida "Temperatura Ambiente", se monitoreará si alcanza un valor mayor que 30 grados Celsius, en caso de cumplir la condición se disparará la alerta.</h6>
+        <p></p>
+        <h6 class="center-align">- El tipo de alerta es el tipo de medida que se va a monitorear. Por ejemplo, si se selecciona "Humedad del Suelo", se monitoreará solamentela humedad del suelo.</h6>
+      </div>
+      <!-- Formulario para crear nueva alerta -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Crear Nueva Alerta</span>
+          <form method="POST" id="alertas-form">
+            <div class="input-field">
+              <select name="tipo_alerta" required>
+                <option value="" disabled selected>Selecciona un tipo de alerta</option>
+                <option value="humedad_suelo">Humedad del Suelo</option>
+                <option value="temperatura_ambiente">Temperatura Ambiente</option>
+                <option value="ph_suelo">pH del Suelo</option>
+                <option value="nitrogeno">Nitrógeno (N)</option>
+                <option value="fosforo">Fósforo (P)</option>
+                <option value="potasio">Potasio (K)</option>
+              </select>
+              <label for="tipo_alerta">Tipo de Alerta</label>
+            </div>
+
+            <div class="input-field">
+              <input type="number" name="umbral" step="any" required>
+              <label for="umbral">Umbral</label>
+            </div>
+
+            <div class="input-field">
+              <select name="condicion" required>
+                <option value="" disabled selected>Selecciona una condición</option>
+                <option value=">">Mayor que (&gt;)</option>
+                <option value="<">Menor que (&lt;)</option>
+                <option value="==">Igual a (==)</option>
+                <option value=">=">Mayor o igual que (&gt;=)</option>
+                <option value="<=">Menor o igual que (&lt;=)</option>
+              </select>
+              <label for="condicion">Condición</label>
+            </div>
+
+            <button class="btn green" type="submit">Agregar Alerta</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Listado de Alertas Activas -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Alertas Activas</span>
+          {% if alertas %}
+            <div class="responsive-table">
+              <table class="highlight centered">
+                <thead>
+                  <tr>
+                    <th>Tipo de Alerta</th>
+                    <th>Umbral</th>
+                    <th>Condición</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for alerta in alertas %}
+                  <tr id="alerta-{{ alerta.id }}">
+                    <td>{{ alerta.tipo_alerta.replace('_', ' ').title() }}</td>
+                    <td>{{ alerta.umbral }}</td>
+                    <td>{{ alerta.condicion }}</td>
+                    <td>
+                      <!-- Aquí se envuelve la variable con comillas -->
+                      <button class="btn red" onclick="eliminarAlerta('{{ alerta.id }}')">
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="grey-text">No hay alertas activas configuradas.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Notificaciones Recientes -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Notificaciones Recientes</span>
+          <div id="notificaciones-container">
+            <p class="grey-text">Cargando notificaciones...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+ <footer class="page-footer green lighten-4">
+    <div class="green darken-1 footer-copyright">
+      <div class="container">
+        © 2025 EcoSmart - Todos los derechos reservados.
+        <a class="grey-text text-lighten-4 right" href="#!">Términos y Condiciones</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      M.AutoInit(); // Inicializa los componentes de Materialize
+    });
+  </script>
+  <script src="{{ url_for('static', filename='js/alertas.js') }}"></script>
+</body>
+</html>

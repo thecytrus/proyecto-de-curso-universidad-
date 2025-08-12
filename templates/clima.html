@@ -1,0 +1,101 @@
+<!--clima.html-->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meteorología - EcoSmart</title>
+  <!-- Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/clima.css') }}" />
+</head>
+<body>
+  
+  <header>
+    <nav class="white lighten-1">
+      <div class="nav-wrapper container">
+        <a href="{{ url_for('index') }}" class="brand-logo left" style="padding-left: 0;">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EcoSmart Logo" style="height: 50px;">
+        </a>
+        <ul class="right hide-on-med-and-down">
+           <li class="{{ 'active-nav' if active == 'index' else '' }}">
+            <a href="{{ url_for('index') }}" style="color: black;">
+               Inicio</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'chatbot_route' else '' }}">
+            <a href="{{ url_for('chatbot_route') }}" style="color: black;">
+              <i class="material-icons left">chat</i> IA</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'cultivos_route' else '' }}">
+            <a href="{{ url_for('cultivos_route') }}" style="color: black;">
+               Cultivo</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'clima_route' else '' }}">
+            <a href="{{ url_for('clima_route') }}" style="color: black;">
+              Meteorología</a>
+          </li>
+          <li class="{{ 'active-nav' if active == 'sensores_route' else '' }}">
+            <a href="{{ url_for('sensores_route') }}" style="color: black;">
+               Sensores &amp; Monitoreo</a>
+          </li>
+         
+          <li class="{{ 'active-nav' if active == 'historial_alertas' else '' }}">
+            <a href="{{ url_for('historial_alertas') }}" style="color: black;">
+              <i class="material-icons left">history</i>Historial alertas
+            </a>
+            
+          </li>
+          <li class="{{ 'active-nav' if active == 'perfil' else '' }}">
+            <a href="/perfil" style="color: black;">
+              <i class="material-icons left">account_circle</i>Mi Perfil
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+
+  <!--CUADRO-->
+  <div class="container">
+    <h2 class="center-align">Consulta de Clima</h2>
+    <div class="info-box">
+      <h6 class="center-align">Ingresa en la barra de busqueda la ciudad que desees consultar</h6>
+    </div>
+  
+    <div class="row">
+      <div class="col s12 m8 l6 offset-m2 offset-l3">
+        <div class="weather-box card-panel hoverable z-depth-3 waves-effect center-align">
+          <form id="weatherForm" class="weather-form">
+            <div class="input-field inline">
+              <i class="material-icons prefix">location_city</i>
+              <input id="cityInput" type="text" placeholder="Ej: Buenos Aires" required>
+              <label for="cityInput">Ciudad</label>
+            </div>
+            <button class="btn waves-effect waves-light teal lighten-1" type="submit">
+              Buscar <i class="material-icons right">search</i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  
+    <div id="weatherResult" class="section">
+      <div id="location" class="center-align"></div>
+      <div id="forecast" class="row"></div>
+    </div>
+  </div>
+    
+
+  <div id="rain-container"></div>
+
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <!-- Script propio -->
+  <script src="{{ url_for('static', filename='js/clima.js') }}"></script>
+</body>
+</html>

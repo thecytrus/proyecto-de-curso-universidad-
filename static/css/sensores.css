@@ -1,0 +1,85 @@
+body {
+  font-family: Tahoma, sans-serif;
+  background-color: #f3fdf5;
+}
+
+/* Updated canvas style for responsiveness and better height */
+canvas {
+  width: 100% !important;
+  height: 180px !important; /* Adjusted for better fit within a column, considering 2x2 layout */
+}
+
+/* Ensure chart containers maintain aspect ratio or desired height */
+.chart-container {
+  position: relative;
+  height: 180px; /* Consistent height for all charts, matching canvas */
+  width: 100%;
+  margin-bottom: 10px; /* Reduced space between charts for a tighter 2x2 grid */
+}
+
+.card-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+footer a {
+  margin: 0 5px;
+  text-decoration: none;
+}
+
+.brand-logo img {
+  max-height: 50px;
+}
+
+.sensor-data p {
+  margin-bottom: 5px; /* Compact the sensor data display */
+  font-size: 0.95rem;
+}
+
+.sensor-data strong {
+  color: #4CAF50; /* A nice green for labels */
+}
+
+/* New: Make the button container responsive */
+.card-action.center-align {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Keep margin top for separation */
+  /* Remove height: 100%; as it can cause issues when placed next to data that doesn't fill the column */
+}
+
+
+/* Adjustments for the main card layout to ensure internal row works well */
+.card .card-content .row {
+  margin-bottom: 0; /* Remove default row margin-bottom to prevent extra space */
+}
+
+/* Ensure columns within the card are aligned at the top */
+.card .card-content .row > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* New: Override Materialize row margins to make it full width */
+.row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* New: Add padding to the cards themselves if they are now flush with the edges */
+.card {
+    margin-left: 10px; /* Small left margin */
+    margin-right: 10px; /* Small right margin */
+}
+
+/* Ensure the H4 remains centered by wrapping it in a .container */
+main .container {
+    width: 90%; /* Adjust as needed */
+    margin: 0 auto;
+}
+h2 {
+    font-weight: 600;
+    color: #2e7d32; 
+   }

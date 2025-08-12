@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Perfil de Usuario - EcoSmart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="white">
+            <div class="nav-wrapper container">
+                <a href="{{ url_for('index') }}" class="brand-logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" 
+                         alt="EcoSmart Logo" 
+                         style="height: 60px; vertical-align: middle;">
+                </a>
+                 <ul id="nav-mobile" class="right hide-on-med-and-down">
+                     <li><a href="{{ url_for('index') }}" style="color: black;">Inicio</a></li>
+                    <li><a href="{{ url_for('logout') }}" style="color: black;">Cerrar sesión</a></li>
+                </ul>
+
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="section">
+            <h4 class="center-align">Perfil de Usuario</h4>
+            <div class="row">
+                <div class="col s12 m8 offset-m2 l6 offset-l3">
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title">
+                                <i class="material-icons left">account_circle</i>Información Personal
+                            </span>
+
+                            <div id="infoUsuario">
+                                <!-- Se han agregado spans con id para que el JS actualice estos datos -->
+                                <p><strong>Nombre:</strong> <span id="nombreMostrar">{{ usuario.nombre }}</span></p>
+                                <p><strong>Correo:</strong> <span id="correoMostrar">{{ usuario.correo }}</span></p>
+                                <p><strong>Tipo de usuario:</strong> <span id="tipoUsuarioMostrar">{{ usuario.tipo_usuario }}</span></p>
+                            </div>
+
+                            <form id="editarPerfilForm" style="display: none; margin-top: 15px;">
+                                <div class="input-field">
+                                    <input id="nombre" type="text" name="nombre" value="{{ usuario.nombre }}" required>
+                                    <label for="nombre" class="active">Nombre</label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="correo" type="email" name="correo" value="{{ usuario.correo }}" required>
+                                    <label for="correo" class="active">Correo</label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="password_actual" type="password" name="password_actual" required>
+                                    <label for="password_actual">Contraseña Actual</label>
+                                </div>
+
+                                <button class="btn green" type="submit">Guardar Cambios</button>
+                                <button class="btn grey" type="button" onclick="toggleEdit()">Cancelar</button>
+                            </form>
+                        </div>
+
+                        <div class="card-action">
+                            <button id="editButton" class="waves-effect waves-light btn green" onclick="toggleEdit()">Editar Perfil</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title">
+                                <i class="material-icons left">lock</i>Cambiar Contraseña
+                            </span>
+                            <form id="cambiarPasswordForm">
+                                <div class="input-field">
+                                    <input id="password_actual_cambio" type="password" name="password_actual_cambio" required>
+                                    <label for="password_actual_cambio">Contraseña Actual</label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="password_nueva" type="password" name="password_nueva" required>
+                                    <label for="password_nueva">Nueva Contraseña</label>
+                                </div>
+                                <div class="input-field">
+                                    <input id="password_nueva_confirm" type="password" name="password_nueva_confirm" required>
+                                    <label for="password_nueva_confirm">Confirmar Nueva Contraseña</label>
+                                </div>
+                                <button class="btn green" type="submit">Cambiar Contraseña</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="page-footer green lighten-1">
+        <div class="container center">
+            © 2025 EcoSmart - Todos los derechos reservados
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- Se incluye el código JavaScript a continuación -->
+    <script>
+        function toggleEdit() {
+            const form = document.getElementById('editarPerfilForm');
+            const info = document.getElementById('infoUsuario');
+            const button = document.getElementById('editButton');
+            
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                info.style.display = 'none';
+                button.innerText = 'Cancelar';
+            } else {
+                form.style.display = 'none';
+                info.style.display = 'block';
+                button.innerText = 'Editar Perfil';
+            }
+        }
+
+        document.getElementById('editarPerfilForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {
+                nombre: document.getElementById('nombre').value,
+                correo: document.getElementById('correo').value,
+                password_actual: document.getElementById('password_actual').value
+            };
+            
+            fetch('/editar_perfil', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            }).then(response => response.json()).then(data => {
+                if (data.message === "Perfil actualizado correctamente") {
+                    M.toast({html: 'Perfil actualizado con éxito!', classes: 'green'});
+                    toggleEdit();
+                    // Actualizar los datos visibles sin recargar la página
+                    document.getElementById('nombreMostrar').textContent = data.usuario.nombre;
+                    document.getElementById('correoMostrar').textContent = data.usuario.correo;
+                } else {
+                    M.toast({html: 'Error al actualizar perfil: ' + data.message, classes: 'red'});
+                }
+            }).catch(() => {
+                M.toast({html: 'Error al conectar con el servidor', classes: 'red'});
+            });
+        });
+
+        document.getElementById('cambiarPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {
+                password_actual: document.getElementById('password_actual_cambio').value,
+                password_nueva: document.getElementById('password_nueva').value,
+                password_nueva_confirm: document.getElementById('password_nueva_confirm').value
+            };
+
+            fetch('/cambiar_password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            }).then(response => response.json()).then(data => {
+                if (data.message === "Contraseña actualizada correctamente") {
+                    M.toast({html: 'Contraseña actualizada correctamente!', classes: 'green'});
+                    document.getElementById('cambiarPasswordForm').reset();
+                } else {
+                    M.toast({html: 'Error al cambiar contraseña: ' + data.message, classes: 'red'});
+                }
+            }).catch(() => {
+                M.toast({html: 'Error al conectar con el servidor', classes: 'red'});
+            });
+        });
+    </script>
+</body>
+</html>

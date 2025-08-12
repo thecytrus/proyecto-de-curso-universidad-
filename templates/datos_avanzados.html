@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos Avanzados - EcoSmart</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <style>
+        .card-panel.weather-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .anomaly-badge {
+            margin-left: 10px;
+        }
+        canvas {
+            max-height: 400px;
+        }
+        .collection-item {
+            position: relative;
+        }
+        .progress {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        h2 {
+        font-weight: 600;
+        color: #2e7d32; 
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="white">
+            <div class="nav-wrapper container">
+                <a href="{{ url_for('index') }}" class="brand-logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EcoSmart Logo" style="height: 60px;">
+                </a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li><a href="{{ url_for('index') }}" style="color: black;">Inicio</a></li>
+                    <li><a href="{{ url_for('chatbot_route') }}" style="color: black;">
+                        <i class="material-icons left">chat</i>IA</a>
+                    <li><a href="{{ url_for('cultivos_route') }}" style="color: black;">Cultivo</a></li>
+                    <li><a href="{{ url_for('clima_route') }}" style="color: black;">Meteorología</a></li>
+                    <li><a href="{{ url_for('sensores_route') }}" style="color: black;">Sensores &amp; Monitoreo</a></li>
+                    <li><a href="{{ url_for('historial_alertas') }}" style="color: black;">
+                        <i class="material-icons left">history</i>Historial alertas
+                    </a></li>
+                    <li><a href="/perfil" style="color: black;">
+                        <i class="material-icons left">account_circle</i>Perfil
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="section">
+            <h2 class="center-align">Análisis Avanzado de Cultivo</h2>
+
+            <div class="row">
+                <div class="col s12">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="card-panel {{ 'red lighten-4' if category == 'error' else 'green lighten-4' }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Filtros</span>
+                    <div class="row">
+                        <div class="input-field col s12 m6">
+                            <select id="cultivo_selector">
+                                {% if cultivos %}
+                                    {% for cultivo in cultivos %}
+                                        <option value="{{ cultivo.numero }}" {% if cultivo.numero == selected_cultivo %}selected{% endif %}>
+                                            Cultivo {{ cultivo.numero }} - {{ cultivo.tipo }} ({{ cultivo.ciudad }})
+                                        </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="" disabled selected>No hay cultivos registrados</option>
+                                {% endif %}
+                            </select>
+                            <label>Selecciona un cultivo</label>
+                        </div>
+                        <div class="col s12 m6">
+                            <p>Rango de tiempo:</p>
+                            <a class="waves-effect waves-light btn-small time-range-btn" data-days="1">24h</a>
+                            <a class="waves-effect waves-light btn-small time-range-btn" data-days="7">7 días</a>
+                            <a class="waves-effect waves-light btn-small time-range-btn" data-days="30">30 días</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Estadísticas de Sensores</span>
+                    <ul class="collection with-header" id="sensor-summary-list">
+                        <li class="collection-header"><h5>Estadísticas de Sensores</h5></li>
+                        <li class="collection-item">Selecciona un cultivo para ver los datos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="weather-forecast"></div>
+
+            <div class="row">
+                <div class="col s12 m6">
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title">Comparativo Actual</span>
+                            <canvas id="comparativoChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title">Tendencias</span>
+                            <canvas id="tendenciasChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <div id="ia-recommendations">
+                        <p>Las recomendaciones aparecerán aquí al seleccionar un cultivo.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Enviar Resumen por Email</span>
+                    <p>Envía un reporte completo con los datos actuales, pronóstico y recomendaciones.</p>
+                    <button id="enviar-email-btn" class="btn waves-effect waves-light green">
+                        <i class="material-icons left">email</i> Enviar Resumen
+                    </button>
+                    <div id="email-status" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+   <footer class="page-footer green lighten-4">
+    <div class="green darken-1 footer-copyright">
+      <div class="container">
+        © 2025 EcoSmart - Todos los derechos reservados.
+        <a class="grey-text text-lighten-4 right" href="#!">Términos y Condiciones</a>
+      </div>
+    </div>
+  </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="{{ url_for('static', filename='js/datos_avanzados.js') }}"></script>
+</body>
+</html>

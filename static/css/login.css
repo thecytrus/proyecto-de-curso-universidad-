@@ -1,0 +1,19 @@
+/* Asegurar que html y body ocupen la altura total */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: #e9f5ec; /* Cambia este valor para igualar el fondo de la página de perfil */
+  font-family: Tahoma, sans-serif;
+}
+
+/* Utilizar Flexbox en el body para que el contenido principal expanda y empuje el footer a la parte inferior */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* El main ocupará el espacio disponible */
+main {
+  flex: 1;
+}

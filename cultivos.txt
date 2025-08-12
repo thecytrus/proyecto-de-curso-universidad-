@@ -1,0 +1,4 @@
+1,Curicï¿½,Pedro ï¿½lvarez,Maï¿½z,-35.004447,-71.226697
+2,Molina,Ana Lï¿½pez,Tomates,-35.106163,-71.279966
+44,Curicï¿½,Dylan,Peras,-34.97703,-71.26137
+20,Curicó,felipe,frutilla,-35.01162237602859,-7124990427512292

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de Alertas - EcoSmart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Materialize & Estilos -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/historial_alertas.css') }}">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="white lighten-1">
+    <div class="nav-wrapper container">
+      <a href="{{ url_for('index') }}" class="brand-logo left" style="padding-left: 0;">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="EcoSmart Logo" style="height: 50px;">
+      </a>
+      <ul class="right hide-on-med-and-down">
+        <li class="{{ 'active-nav' if active == 'chatbot_route' else '' }}">
+          <a href="{{ url_for('chatbot_route') }}" style="color: black;">
+            <i class="material-icons left">chat</i>IA
+          </a>
+        </li>
+        <li class="{{ 'active-nav' if active == 'cultivos_route' else '' }}">
+          <a href="{{ url_for('cultivos_route') }}" style="color: black;">Cultivo</a>
+        </li>
+        <li class="{{ 'active-nav' if active == 'clima_route' else '' }}">
+          <a href="{{ url_for('clima_route') }}" style="color: black;">Meteorología</a>
+        </li>
+        <li class="{{ 'active-nav' if active == 'sensores_route' else '' }}">
+          <a href="{{ url_for('sensores_route') }}" style="color: black;">Sensores &amp; Monitoreo</a>
+        </li>
+        <li class="{{ 'active-nav' if active == 'gestinar_alertas' else '' }}">
+          <a href="{{ url_for('gestionar_alertas') }}" style="color: black;">
+            <i class="material-icons left">notifications</i>Alertas
+          </a>
+        </li>
+        <li class="{{ 'active-nav' if active == 'historial_alertas' else '' }}">
+          <a href="{{ url_for('historial_alertas') }}" style="color: black;">
+            <i class="material-icons left">history</i>Historial alertas
+          </a>
+        </li>
+        <li class="{{ 'active-nav' if active == 'perfil' else '' }}">
+          <a href="{{ url_for('perfil') }}" style="color: black;">
+            <i class="material-icons left">account_circle</i>Mi Perfil
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="container">
+    <div class="section">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="row flash-messages">
+            <div class="col s12">
+              {% for category, message in messages %}
+                <div class="card-panel {{ 'red lighten-1' if category == 'error' else 'green lighten-1' if category == 'success' else 'blue lighten-1' }} white-text">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <h2 class="center-align">Historial de Alertas</h2>
+
+      <div class="card">
+        <div class="card-content">
+          <div class="responsive-table">
+            <table class="highlight centered striped">
+              <thead>
+                <tr>
+                  <th>Fecha y Hora</th>
+                  <th>Tipo de Alerta</th>
+                  <th>Valor del Sensor</th>
+                  <th>Condición</th>
+                  <th>Umbral</th>
+                  <th>Número de Cultivo</th>
+                </tr>
+              </thead>
+              <tbody id="historial-body">
+                <!-- JS insertará los registros -->
+                <tr><td colspan="6">Cargando historial...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+   <footer class="page-footer green lighten-4">
+    <div class="green darken-1 footer-copyright">
+      <div class="container">
+        © 2025 EcoSmart - Todos los derechos reservados.
+        <a class="grey-text text-lighten-4 right" href="#!">Términos y Condiciones</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="{{ url_for('static', filename='js/alertas.js') }}"></script>
+</body>
+</html>
